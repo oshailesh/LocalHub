@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <property name="LOGDIR" value="logs"></property>
+    <property name="APP_NAME" value="customerRepo"></property>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d ${APP_NAME} %-5level [%thread] %logger: %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="ROLLINGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGDIR}/${APP_NAME}-log.%d{MM-dd-yyyy}.log</fileNamePattern>
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf-8</charset>
+            <Pattern>%d ${APP_NAME} %-5level [%thread] %logger: %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+	<root level="INFO">
+        <appender-ref ref="ROLLINGFILE" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <springProfile name="dev">
+        <logger name="org.springframework" additivity="false" level="DEBUG">
+            <appender-ref ref="ROLLINGFILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="java.lang" additivity="false" level="DEBUG">
+            <appender-ref ref="ROLLINGFILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+	
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="org.springframework" additivity="false" level="ERROR">
+            <appender-ref ref="ROLLINGFILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <logger name="java.lang" additivity="false" level="ERROR">
+            <appender-ref ref="ROLLINGFILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+</configuration>
